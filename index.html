@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sortify | Sorting Visualizer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial;background:#f5f7ff;color:#18213b}
+header{background:linear-gradient(120deg,#171b45,#5756e8);color:#fff;padding:30px 7%}
+nav{display:flex;justify-content:space-between;align-items:center;font-weight:800;letter-spacing:1px}
+.badge{background:#ffffff20;border:1px solid #ffffff40;padding:8px 13px;border-radius:30px;font-size:11px}
+.hero{max-width:700px;padding:45px 0 15px}.hero h1{font-size:42px;line-height:1.1;margin:0 0 15px}.hero h1 span{color:#bcbcff}.hero p{line-height:1.7;color:#e1e3ff}
+main{max-width:1250px;margin:25px auto;padding:0 18px}.panel,.toolbar,.card{background:white;border:1px solid #e7ebf5;border-radius:18px;box-shadow:0 8px 25px #20255d0b}
+.toolbar{padding:20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}.control{min-width:190px}.control label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:10px;color:#667085}.control b{color:#5756e8}input{width:100%;accent-color:#5756e8}
+button{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.07);transform:translateY(-1px)}.primary{background:#5756e8;color:#fff}.green{background:#e7faf2;color:#087f5b}.red{background:#fff0f3;color:#d92d55}.status{margin-left:auto;font-size:12px;color:#667085}
+.panel{padding:22px;margin-top:20px}.title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:17px}.title h2{font-size:18px;margin:0}.title small{color:#8992a8;font-size:11px}.array{height:260px;display:flex;align-items:flex-end;gap:4px;padding:18px;background:#f8f9ff;border-radius:12px}.bar{flex:1;background:linear-gradient(#9698ff,#5756e8);border-radius:5px 5px 1px 1px;transition:.1s}.bar.active{background:#ffb020}.bar.sorted{background:#10b981}
+.legend{font-size:11px;color:#7d879b;margin-top:12px}.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:18px}.storybox{padding:20px;border-radius:14px;background:linear-gradient(135deg,#fff7e6,#fff);border:1px solid #ffe5b0}.storybox h3{margin:0 0 8px;color:#a15c00}.storybox p{font-size:13px;line-height:1.7;color:#6c7283}.steps{display:flex;gap:8px;flex-wrap:wrap}.step{background:#fff;border:1px solid #f1d7a0;padding:8px 12px;border-radius:9px;font-size:11px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}.card{overflow:hidden}.cardhead{padding:16px;border-bottom:1px solid #edf0f6;display:flex;gap:10px;align-items:center}.ico{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#eeeeff;font-size:19px}.card h3{margin:0;font-size:14px}.card p{margin:4px 0 0;font-size:10px;color:#8a93a7}.mini{height:115px;display:flex;align-items:flex-end;gap:2px;padding:13px;background:#fafbff}.mini span{flex:1;background:#a7b3ff;border-radius:3px 3px 0 0}.inside{padding:14px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.metric{text-align:center;background:#f6f8fc;padding:8px 2px;border-radius:8px}.metric strong{display:block;font-size:14px}.metric small{font-size:9px;color:#8a93a7}.run{width:100%;margin-top:12px;color:#fff}
+.chart{display:flex;align-items:flex-end;justify-content:space-around;gap:20px;height:260px;padding:20px 25px;background:#fafbff;border-radius:12px;border:1px solid #edf0f7}.chartcol{height:100%;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}.chartbar{width:65%;max-width:70px;min-height:4px;border-radius:7px 7px 0 0;background:linear-gradient(#9698ff,#5756e8);transition:height .5s}.chartcol span{font-size:11px;font-weight:700;color:#667085}.chartcol b{font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:14px;border-bottom:1px solid #edf0f6}th{background:#f4f5ff;color:#68728a}.pill{background:#e7faf2;color:#087f5b;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:700}
+footer{text-align:center;color:#929bb0;font-size:11px;padding:25px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:550px){.grid,.story{grid-template-columns:1fr}.hero h1{font-size:30px}.status{margin-left:0}}
+</style>
+</head>
+<body>
+<header><nav><div>▥ SORTIFY</div><div class="badge">DSA LAB • INTERACTIVE PROJECT</div></nav><div class="hero"><h1>Make sorting <span>visual.</span><br>Make learning easy.</h1><p>Explore four popular sorting algorithms through animations, real-life examples, and live performance comparisons.</p></div></header>
+<main>
+<div class="toolbar">
+<div class="control"><label>Array Size <b id="sizeText">35 elements</b></label><input id="size" type="range" min="10" max="70" value="35"></div>
+<div class="control"><label>Animation Speed <b id="speedText">Medium</b></label><input id="speed" type="range" min="1" max="100" value="55"></div>
+<button class="primary" onclick="generate()">↻ Generate Array</button><button class="green" onclick="runAll()">▶ Run All</button><button class="red" onclick="stopAll()">■ Stop</button><span class="status" id="status">● Ready</span>
+</div>
+<section class="panel"><div class="title"><h2>Original Random Array</h2><small>Each bar represents an element</small></div><div id="main" class="array"></div><div class="legend"><i style="background:#5756e8"></i>Unsorted &nbsp;&nbsp; <i style="background:#ffb020"></i>Comparing &nbsp;&nbsp; <i style="background:#10b981"></i>Sorted</div></section>
+<section class="panel"><div class="title"><h2>🌍 Real-Life Example: Arranging Books in a Library</h2><small>From random order to organized shelves</small></div><div class="story"><div class="storybox"><h3>Imagine this...</h3><p>A librarian receives books in random order. The books must be arranged from shortest to tallest. Different sorting algorithms solve the same problem using different strategies.</p><div class="steps"><div class="step">📚 Random books</div><div class="step">🔍 Compare heights</div><div class="step">↔️ Rearrange</div><div class="step">✅ Organized shelf</div></div></div><div class="storybox"><h3>Where sorting is used</h3><p>Sorting helps shopping apps arrange products by price, music apps arrange songs by popularity, and search engines organize results. It makes finding information faster and easier.</p><div class="steps"><div class="step">🛒 E-commerce</div><div class="step">🎵 Music apps</div><div class="step">🔎 Search engines</div></div></div></div></section>
+<section class="grid" id="cards"></section>
+<section class="panel"><div class="title"><h2>📈 Live Performance Comparison</h2><small>Execution time after running algorithms</small></div><div id="chart" class="chart"></div><table><thead><tr><th>Algorithm</th><th>Time (ms)</th><th>Comparisons</th><th>Swaps / Shifts</th><th>Average Complexity</th></tr></thead><tbody id="table"></tbody></table></section>
+<footer>Built with HTML, CSS & JavaScript • Sortify Sorting Algorithm Visualizer</footer>
+</main>
+<script>
+let base=[],working=false,halt=false,data={};const names=["Bubble Sort","Selection Sort","Insertion Sort","Quick Sort"],icons=["🫧","🎯","🃏","⚡"],desc=["Swap neighboring elements repeatedly.","Select the smallest element each round.","Insert each element into its correct place.","Divide the array using a pivot."],complex=["O(n²)","O(n²)","O(n²)","O(n log n)"];
+function generate(){if(working)return;base=Array.from({length:+size.value},()=>Math.floor(Math.random()*100)+5);data={};draw(base);renderCards();renderTable();renderChart();status.textContent="● New array generated"}
+function draw(a,active=[],sorted=[]){main.innerHTML="";let max=Math.max(...a);a.forEach((v,i)=>{let x=document.createElement("div");x.className="bar"+(active.includes(i)?" active":"")+(sorted.includes(i)?" sorted":"");x.style.height=(v/max*92+5)+"%";x.title=v;main.appendChild(x)})}
+function mini(i,a,active=[]){let el=document.getElementById("mini"+i);el.innerHTML="";let max=Math.max(...a);a.forEach((v,j)=>{let x=document.createElement("span");x.style.height=(v/max*90+5)+"%";if(active.includes(j))x.style.background="#ffb020";el.appendChild(x)})}
+function renderCards(){cards.innerHTML="";names.forEach((n,i)=>{cards.innerHTML+=`<div class="card"><div class="cardhead"><div class="ico">${icons[i]}</div><div><h3>${n}</h3><p>${desc[i]}</p></div></div><div class="mini" id="mini${i}"></div><div class="inside"><div class="metrics"><div class="metric"><strong id="c${i}">—</strong><small>Comparisons</small></div><div class="metric"><strong id="s${i}">—</strong><small>Swaps</small></div><div class="metric"><strong id="t${i}">—</strong><small>Time</small></div></div><button class="run" style="background:${["#5756e8","#8b5cf6","#10b981","#ef476f"][i]}" onclick="runOne(${i})">Run ${n} →</button></div></div>`;mini(i,base)})}
+function renderTable(){table.innerHTML="";names.forEach((n,i)=>{let r=data[i];table.innerHTML+=`<tr><td><b>${n}</b></td><td>${r?r.time+" ms":"—"}</td><td>${r?r.c:"—"}</td><td>${r?r.s:"—"}</td><td>${complex[i]}</td></tr>`})}
+function renderChart(){chart.innerHTML="";let vals=names.map((_,i)=>data[i]?+data[i].time:0),max=Math.max(...vals,1);names.forEach((n,i)=>{let col=document.createElement("div");col.className="chartcol";let b=document.createElement("div");b.className="chartbar";b.style.height=(vals[i]/max*85+3)+"%";b.style.background=["#5756e8","#8b5cf6","#10b981","#ef476f"][i];let label=document.createElement("span");label.textContent=["Bubble","Selection","Insertion","Quick"][i];let val=document.createElement("b");val.textContent=vals[i]?vals[i]+" ms":"—";col.append(b,val,label);chart.append(col)})}
+function wait(){return new Promise(r=>setTimeout(r,Math.max(8,505-+speed.value*5)))}
+async function show(a,active=[]){if(halt)throw 0;draw(a,active);await wait()}
+async function bubble(a){let c=0,s=0;for(let i=0;i<a.length-1;i++)for(let j=0;j<a.length-i-1;j++){c++;await show(a,[j,j+1]);if(a[j]>a[j+1]){[a[j],a[j+1]]=[a[j+1],a[j]];s++;await show(a,[j,j+1])}}return[c,s]}
+async function selection(a){let c=0,s=0;for(let i=0;i<a.length-1;i++){let m=i;for(let j=i+1;j<a.length;j++){c++;await show(a,[m,j]);if(a[j]<a[m])m=j}if(m!==i){[a[i],a[m]]=[a[m],a[i]];s++;await show(a,[i,m])}}return[c,s]}
+async function insertion(a){let c=0,s=0;for(let i=1;i<a.length;i++){let key=a[i],j=i-1;while(j>=0){c++;await show(a,[j,i]);if(a[j]<=key)break;a[j+1]=a[j];s++;j--;await show(a,[j+1])}a[j+1]=key}return[c,s]}
+async function quick(a){let c=0,s=0;async function part(l,r){let p=a[r],i=l;for(let j=l;j<r;j++){c++;await show(a,[j,r]);if(a[j]<p){if(i!==j){[a[i],a[j]]=[a[j],a[i]];s++;await show(a,[i,j])}i++}}if(i!==r){[a[i],a[r]]=[a[r],a[i]];s++;await show(a,[i,r])}return i}async function qs(l,r){if(l<r){let p=await part(l,r);await qs(l,p-1);await qs(p+1,r)}}await qs(0,a.length-1);return[c,s]}
+let funcs=[bubble,selection,insertion,quick];
+async function runOne(i){if(working)return;working=true;halt=false;let a=base.slice(),start=performance.now();try{let [c,s]=await funcs[i](a);let time=(performance.now()-start).toFixed(2);data[i]={c,s,time};document.getElementById("c"+i).textContent=c;document.getElementById("s"+i).textContent=s;document.getElementById("t"+i).textContent=time+"ms";status.textContent="● "+names[i]+" completed";renderTable();renderChart()}catch(e){status.textContent="● Sorting stopped"}working=false}
+async function runAll(){if(working)return;for(let i=0;i<4;i++)await runOne(i)}
+function stopAll(){halt=true;working=false;status.textContent="● Stop requested"}
+size.oninput=()=>sizeText.textContent=size.value+" elements";
+speed.oninput=()=>speedText.textContent=+speed.value<35?"Slow":+speed.value<70?"Medium":"Fast";
+generate();
+</script>
+</body></html>

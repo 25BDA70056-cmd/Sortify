@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sortify | Step-by-Step Sorting Visualizer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6ff;color:#17213d}
+header{padding:28px 7%;color:white;background:linear-gradient(120deg,#171b45,#6058ed)}
+header h1{margin:0;font-size:34px}header p{color:#dddfff;line-height:1.6}
+main{max-width:1250px;margin:24px auto;padding:0 18px}.panel{background:#fff;border:1px solid #e4e8f5;border-radius:17px;padding:21px;margin-bottom:20px;box-shadow:0 7px 25px #20255d0b}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.controls label{font-size:13px;font-weight:bold}.controls select{padding:11px;border:1px solid #dbe1f0;border-radius:9px}
+button{border:0;border-radius:9px;padding:11px 15px;font-weight:bold;cursor:pointer;background:#5756e8;color:#fff}button:hover{opacity:.85}button:disabled{opacity:.4}.gray{background:#667085}.green{background:#10a37f}.orange{background:#f59e0b}.red{background:#e94b68}
+.layout{display:grid;grid-template-columns:1.25fr 1fr;gap:20px}.array{height:245px;display:flex;align-items:flex-end;gap:5px;padding:18px;background:#f8f9ff;border-radius:12px}.bar{flex:1;background:#818cf8;border-radius:5px 5px 0 0;position:relative;transition:.2s}.bar.active{background:#f59e0b}.bar.done{background:#10b981}.bar span{position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);font-size:10px;color:#64748b}
+h2{font-size:18px;margin:0 0 16px}.muted{font-size:12px;color:#7c879d}.code{background:#151a32;color:#dce4ff;border-radius:12px;padding:16px;font-family:Consolas,monospace;font-size:13px;line-height:1.9;min-height:245px;overflow:auto}.line{padding:2px 8px;border-radius:5px}.line.current{background:#f59e0b;color:#151a32;font-weight:bold}
+.explain{background:#eef2ff;border-left:4px solid #5756e8;padding:15px;border-radius:8px;line-height:1.6;font-size:13px;margin-top:15px}.stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px}.stat{background:#f6f8fc;padding:12px 20px;border-radius:10px}.stat b{display:block;font-size:20px;color:#5756e8}.stat small{color:#7c879d}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:12px;border-bottom:1px solid #e7ebf4;text-align:left}th{background:#f0f2ff}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><h1>⚡ SORTIFY</h1><p>Step-by-step sorting algorithm visualizer — understand every comparison, shift, swap, and decision.</p></header>
+<main>
+<section class="panel controls">
+<label>Choose Algorithm:</label><select id="algo"><option value="bubble">Bubble Sort</option><option value="selection">Selection Sort</option><option value="insertion">Insertion Sort</option><option value="quick">Quick Sort</option></select>
+<button onclick="newRun()">↻ New Example</button><button class="green" onclick="play()">▶ Play</button><button class="gray" onclick="pause()">Ⅱ Pause</button><button onclick="previous()">⏮ Previous</button><button onclick="next()">Next ⏭</button><button class="orange" onclick="reset()">↺ Reset</button>
+</section>
+<div class="layout">
+<section class="panel"><h2>Visual Array</h2><div id="array" class="array"></div><p class="muted" id="progress">Step 0 of 0</p><div class="stats"><div class="stat"><b id="comparisons">0</b><small>Comparisons</small></div><div class="stat"><b id="swaps">0</b><small>Swaps / Shifts</small></div><div class="stat"><b id="step">0</b><small>Current Step</small></div></div></section>
+<section class="panel"><h2>Code Execution</h2><div id="code" class="code"></div><div id="explanation" class="explain">Choose an algorithm and press Next to begin.</div></section>
+</div>
+<section class="panel"><h2>📚 Real-Life Connection</h2><p id="real" class="muted"></p></section>
+<section class="panel"><h2>Algorithm Complexity</h2><table><thead><tr><th>Algorithm</th><th>Best Case</th><th>Average Case</th><th>Worst Case</th><th>Space</th></tr></thead><tbody><tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr><tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr><tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td></tr><tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td></tr></tbody></table></section>
+</main>
+<script>
+const codes={
+bubble:["for i = 0 to n-1","  for j = 0 to n-i-2","    compare a[j] and a[j+1]","    if a[j] > a[j+1]","      swap a[j], a[j+1]","return sorted array"],
+selection:["for i = 0 to n-2","  min = i","  for j = i+1 to n-1","    compare a[j] and a[min]","    update min if smaller","  swap a[i] and a[min]","return sorted array"],
+insertion:["for i = 1 to n-1","  key = a[i]","  j = i - 1","  while j >= 0 and a[j] > key","    shift a[j] one position right","    j = j - 1","  insert key at a[j+1]","return sorted array"],
+quick:["choose a pivot","set pointer i = low","for j = low to high-1","  compare a[j] with pivot","  if a[j] < pivot","    swap a[i] and a[j]","    increment i","swap pivot into position","recursively sort left and right"]
+};
+const real={
+bubble:"Like repeatedly comparing neighboring books on a shelf and swapping them when the taller book is before the shorter one.",
+selection:"Like finding the shortest remaining book and placing it in the next correct shelf position.",
+insertion:"Like taking one new book and inserting it into an already sorted group of books.",
+quick:"Like choosing one book as a pivot, putting shorter books on one side and taller books on the other, then repeating."
+};
+let base=[7,3,8,2,6,1,5,4],states=[],idx=0,timer=null;
+function makeStates(type){let a=base.slice(),s=[{a:a.slice(),line:-1,active:[],c:0,w:0,msg:"Initial unsorted array. Press Next to begin."}],c=0,w=0;
+function add(line,active,msg){s.push({a:a.slice(),line,active,c,w,msg})}
+if(type==="bubble"){for(let i=0;i<a.length-1;i++)for(let j=0;j<a.length-i-1;j++){c++;add(2,[j,j+1],`Compare ${a[j]} and ${a[j+1]}.`);if(a[j]>a[j+1]){[a[j],a[j+1]]=[a[j+1],a[j]];w++;add(4,[j,j+1],`Swap because ${a[j+1]} was greater than ${a[j]}.`)}}}
+if(type==="selection"){for(let i=0;i<a.length-1;i++){let m=i;add(1,[i],`Start this round with index ${i} as the minimum.`);for(let j=i+1;j<a.length;j++){c++;add(3,[m,j],`Compare current minimum ${a[m]} with ${a[j]}.`);if(a[j]<a[m]){m=j;add(4,[m],`New minimum found: ${a[m]}.`)}}if(m!==i){[a[i],a[m]]=[a[m],a[i]];w++;add(5,[i,m],`Place minimum ${a[i]} at position ${i}.`)}}}
+if(type==="insertion"){for(let i=1;i<a.length;i++){let key=a[i],j=i-1;add(1,[i],`Select ${key} as the key to insert.`);while(j>=0){c++;add(3,[j,i],`Compare ${a[j]} with key ${key}.`);if(a[j]<=key)break;a[j+1]=a[j];w++;add(4,[j,j+1],`Shift ${a[j]} one position to the right.`);j--}a[j+1]=key;add(6,[j+1],`Insert key ${key} at position ${j+1}.`)}}
+if(type==="quick"){asyncDummy=0;function part(l,r){let p=a[r],i=l;add(0,[r],`Choose ${p} as the pivot.`);for(let j=l;j<r;j++){c++;add(2,[j,r],`Compare ${a[j]} with pivot ${p}.`);if(a[j]<p){if(i!==j){[a[i],a[j]]=[a[j],a[i]];w++;add(5,[i,j],`Move smaller value to the left of pivot.`)}i++}}if(i!==r){[a[i],a[r]]=[a[r],a[i]];w++;add(7,[i,r],`Place pivot ${p} in its final position.`)}return i}function qs(l,r){if(l<r){let p=part(l,r);qs(l,p-1);qs(p+1,r)}}qs(0,a.length-1)}
+s.push({a:a.slice(),line:-1,active:[],c,w,msg:"Sorting completed! The array is now ordered."});return s}
+function render(){let st=states[idx];array.innerHTML="";let max=Math.max(...st.a);st.a.forEach((v,i)=>{let b=document.createElement("div");b.className="bar"+(st.active.includes(i)?" active":"");b.style.height=(v/max*85+8)+"%";let sp=document.createElement("span");sp.textContent=v;b.append(sp);array.append(b)});code.innerHTML=codes[algo.value].map((x,i)=>`<div class="line ${i===st.line?"current":""}">${i+1}. ${x}</div>`).join("");explanation.textContent=st.msg;comparisons.textContent=st.c;swaps.textContent=st.w;step.textContent=idx;progress.textContent=`Step ${idx} of ${states.length-1}`;real.textContent=realExamples[algo.value]}
+const realExamples=real;
+function reset(){pause();idx=0;render()}
+function newRun(){pause();base=[7,3,8,2,6,1,5,4];states=makeStates(algo.value);idx=0;render()}
+function next(){if(idx<states.length-1){idx++;render()}else pause()}
+function previous(){pause();if(idx>0){idx--;render()}}
+function play(){if(timer)return;timer=setInterval(()=>{if(idx>=states.length-1){pause();return}next()},Math.max(80,600-+speed.value*4))}
+function pause(){clearInterval(timer);timer=null}
+algo.onchange=newRun;
+let speed={value:55};newRun();
+</script></body></html>
